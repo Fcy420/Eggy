@@ -1,5 +1,7 @@
 #pragma once	
 #include "../libraries/glad/glad.h"
+#include "../libraries/glm/glm/glm.hpp"
+#include "../libraries/glm/glm/gtc/type_ptr.hpp"
 #include "FileLoader.hpp"
 
 #include <string>
@@ -35,8 +37,18 @@ namespace Shader {
 	}
 
 	inline void Set(Shader* shader, float val, const char* uniform) {
-		glUseProgram(shader->ID);
+		Use(shader);
 		glUniform1f(glGetUniformLocation(shader->ID, uniform), val);
+	}
+	
+	inline void Set(Shader* shader, glm::vec3 val, const char* uniform) {
+		Use(shader);
+		glUniform3fv(glGetUniformLocation(shader->ID, uniform), 1, glm::value_ptr(val));
+	}
+
+	inline void Set(Shader* shader, glm::mat4 val, const char* uniform) {
+		Use(shader);
+		glUniformMatrix4fv(glGetUniformLocation(shader->ID, uniform), 1, GL_FALSE, glm::value_ptr(val));
 	}
 
 	inline void DestroyShader(Shader* shader) {

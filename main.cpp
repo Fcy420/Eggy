@@ -1,41 +1,38 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <dlfcn.h>
+#include <stdlib.h>
+
 #include "files/Window.hpp"
 #include "files/Mesh.hpp"
 #include "files/Shader.hpp"
 #include "files/ShaderCollection.hpp"
+#include "files/Camera.hpp"
+#include "files/UI.hpp"
+
+unsigned int width = 1280, height = 720;
 
 int main() {
 	Window::Window window;
 	
-	Window::CreateWindow(&window, 600, 600, "Window");
+	Window::CreateWindow(&window, width, height, "Window");
 	
-	Mesh::Mesh screenRect;
+	UI::Initialize(&window);
 	
-	Mesh::CreateMesh(&screenRect);
-	
-	std::vector<float> verts = {
-		0,0,0,
-		1,0,0,
-		0,1,0,
-		1,1,0,
-	};
-	std::vector<unsigned int> tris = {
-		0,1,2,3,2,1
-	};
-	Mesh::MeshData(&screenRect, verts, tris);
-	
-	Shader::Shader shader;
-	Shader::CreateShader(&shader, "Shaders/standard/vert.glsl", "Shaders/standard/frag.glsl");
-	
-	ShaderCollection::ShaderCollection shaderCollection;
-	ShaderCollection::AddShader(shaderCollection, &shader);
 
 	while(window.open) {
 		Window::ClearWindow(&window);
-		Shader::Use(&shader);
-		Mesh::RenderMesh(&screenRect);
+		UI::CreateFrame();
+		UI::BeginWindow("Debugger");
+		float ms;
+		Window::GetFPS(&window, ms);
+		UI::Text(std::string("Frame: " + std::to_string(ms) + " ms, FPS: " + std::to_string(roundf(1.0f / ms))).c_str());
+		UI::Button("Button Testing!");
+		UI::EndWindow();
+		UI::Render();
 		if(Window::GetKey(&window, GLFW_KEY_ESCAPE)) {
 			Window::CloseWindow(&window);
 		}

@@ -4,6 +4,7 @@ add_subdirectory(libraries/glfw)
 add_subdirectory(libraries/glm)
 set(libIncludes 
 	libraries/glad/glad.h
+	libraries/KHR/khrplatform.h
 	libraries/glfw/include/GLFW/glfw3.h
 	libraries/imgui/imconfig.h
 	libraries/imgui/imgui.cpp
@@ -23,4 +24,4 @@ set(libIncludes
 )
 find_package(OpenGL REQUIRED)
 add_executable(${PROJECT_NAME} ${libIncludes} glad.c main.cpp)
-target_link_libraries(${PROJECT_NAME} OpenGL::GL dl glfw)
+target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw glm)

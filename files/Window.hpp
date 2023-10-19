@@ -19,6 +19,7 @@ namespace Window {
 		glfwMakeContextCurrent(window->window);
 		gladLoadGL();
 		glViewport(0,0,width,height);
+		glEnable(GL_DEPTH_TEST);
 	}
 	inline bool GetKey(Window* window, int key) {
 		return glfwGetKey(window->window, key);
@@ -35,5 +36,12 @@ namespace Window {
 		window->open = false;
 		glfwDestroyWindow(window->window);
 		glfwTerminate();
+	}
+	inline double lastFrame = 0.0;
+	inline void GetFPS(Window* window, float& delta) {
+		double curTime = glfwGetTime();
+		delta = curTime - lastFrame;
+		lastFrame = curTime;
+		
 	}
 }
