@@ -1,14 +1,45 @@
-#pragma once
+#pragma once	
 #include "../libraries/glad/glad.h"
+#include "FileLoader.hpp"
+
+#include <string>
 
 
 namespace Shader {
 	struct Shader {
 		unsigned int ID;
 	};
-	inline void CreateShader(Shader* shader, const char* path) {
-		//TODO : Generate shader
+	inline void CreateShader(Shader* shader, const char* vertPath, const char* fragPath) {
+		std::string vertSource;
+		FileLoader::Read(vertSource, vertPath);
+		const char* vertSourceS = vertSource.c_str();
+		unsigned int vertShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertShader, 1, &vertSourceS, NULL);
+		glCompileShader(vertShader);
+		std::string fragSource;
+		FileLoader::Read(fragSource, fragPath);
+		const char* fragSourceS = fragSource.c_str();
+		unsigned int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragShader, 1, &fragSourceS, NULL);
+		glCompileShader(fragShader);
+		shader->ID = glCreateProgram();
+		glAttachShader(shader->ID, vertShader);
+		glAttachShader(shader->ID, fragShader);
+		glLinkProgram(shader->ID);
+		glDeleteShader(vertShader);
+		glDeleteShader(fragShader);
+	}
+	
+	inline void Use(Shader* shader) {
+		glUseProgram(shader->ID);
 	}
 
+	inline void Set(Shader* shader, float val, const char* uniform) {
+		glUseProgram(shader->ID);
+		glUniform1f(glGetUniformLocation(shader->ID, uniform), val);
+	}
 
+	inline void DestroyShader(Shader* shader) {
+		glDeleteProgram(shader->ID);
+	}
 }
