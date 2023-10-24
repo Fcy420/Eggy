@@ -6,6 +6,7 @@ namespace Window {
 	struct Window {
 		GLFWwindow* window = nullptr;
 		bool open = false;
+		double lastFrame = 0.0;
 	};
 	
 	inline void CreateWindow(Window* window, int width, int height, const char* name) {
@@ -26,22 +27,40 @@ namespace Window {
 	}
 	inline void ClearWindow(Window* window) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(1,1,1,1);
+		glClearColor(0.1,0.1,0.1,1);
 	}
 	inline void SwapWindowBuffers(Window* window) {
+		window->open = !glfwWindowShouldClose(window->window);
 		glfwSwapBuffers(window->window);
+	}
+	inline void PollEvents() {
 		glfwPollEvents();
 	}
 	inline void CloseWindow(Window* window) {
-		window->open = false;
+		glfwSetWindowShouldClose(window->window, 1);
+	}
+	inline void DestroyWindow(Window* window) {
 		glfwDestroyWindow(window->window);
 		glfwTerminate();
 	}
-	inline double lastFrame = 0.0;
 	inline void GetFPS(Window* window, float& delta) {
 		double curTime = glfwGetTime();
-		delta = curTime - lastFrame;
-		lastFrame = curTime;
-		
+		delta = curTime - window->lastFrame;
+		window->lastFrame = curTime;
+	}
+	inline void SetCursorPos(Window* window, float x, float y) {
+		glfwSetCursorPos(window->window, x, y);
+	}
+	inline void GetCursorPos(Window* window, double* x, double* y) {
+		glfwGetCursorPos(window->window, x, y);	
+	}
+	inline void GetWindowSize(Window* window, int* width, int* height) {
+		glfwGetWindowSize(window->window, width, height);
+	}
+	inline void SetCursor(Window* window, int cursorMode) {
+		glfwSetInputMode(window->window, GLFW_CURSOR, cursorMode);
+	}
+	inline bool GetMouse(Window* window, int button) {
+		return glfwGetMouseButton(window->window, button);
 	}
 }
