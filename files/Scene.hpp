@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 
+#include "../libraries/glad/glad.h"
 
 #include "Camera.hpp"
 #include "Material.hpp"
@@ -56,10 +57,7 @@ namespace Scene {
 		glBindFramebuffer(GL_FRAMEBUFFER, scene->fbo);
 		Window::ClearWindow(window);
 		for(auto& node : scene->nodes) {
-			for(auto& mat : node.model.materials) {
-				Camera::UpdateCameraMatrix(&mat.shader, cam);
-			}
-			Node::Update(&node);
+			Node::Update(&node, cam);
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		Window::ClearWindow(window);
@@ -116,6 +114,17 @@ namespace Scene {
 			index++;
 
 		}
+	}
+	
+	inline void Destroy(Scene* scene) {
+		glDeleteFramebuffers(1, &scene->fbo);
+		glDeleteRenderbuffers(1, &scene->rbo);
+		glDeleteTextures(1, &scene->tex);	
+		for(auto& node : scene->nodes) {
+			Node::Destroy(&node);
+		}
 		
+		scene->nodes.clear();
+
 	}
 }

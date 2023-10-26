@@ -5,6 +5,7 @@
 #include "Model.hpp"
 #include "Shader.hpp"
 #include "Material.hpp"
+#include "Camera.hpp"
 #include "../libraries/glm/glm/glm.hpp"
 #include "../libraries/glm/glm/gtx/vector_angle.hpp"
 
@@ -19,7 +20,7 @@ namespace Node {
 		}
 	};
 	
-	inline void Update(Node* node) {
+	inline void Update(Node* node, Camera::Camera* cam) {
 		if(node->model.meshes.size() > 0) {
 			glm::mat4 matrix = glm::mat4(1.0f);
 			matrix = glm::translate(matrix, node->position);
@@ -32,6 +33,7 @@ namespace Node {
 			for(auto& material : node->model.materials) {
 				Shader::Set(&material.shader, matrix, "Transform");
 				Shader::Set(&material.shader, normalMatrix, "NormalTransform");
+				Camera::UpdateCameraMatrix(&material.shader, cam);
 			}
 			Model::Render(&node->model);
 		}
@@ -39,5 +41,9 @@ namespace Node {
 
 	inline void Rotate(Node* node, glm::vec3 rotation) {
 		node->rotation += rotation;	
+	}
+	
+	inline void Destroy(Node* node) {
+		Model::Destroy(&node->model);
 	}
 }

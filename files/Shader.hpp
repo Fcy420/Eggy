@@ -55,6 +55,10 @@ namespace Shader {
 	}
 
 	inline void Use(Shader* shader) {
+		if(shader == nullptr) {
+			glUseProgram(0);
+			return;
+		}
 		glUseProgram(shader->ID);
 	}
 	

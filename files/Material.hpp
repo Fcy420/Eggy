@@ -74,6 +74,7 @@ namespace Material {
 		return true;
 	}
 	inline void Destroy(Material* mat) {
+		mat->properties.clear();
 		Shader::DestroyShader(&mat->shader);	
 	}
 }

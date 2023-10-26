@@ -33,6 +33,7 @@ namespace Model {
 				std::vector<float> verts;
 				std::vector<unsigned int> tris;
 				aiMesh* mesh = scene->mMeshes[i];
+				
 				for(int k = 0; k < mesh->mNumVertices; k++) {
 					aiVector3D vert = mesh->mVertices[k];
 					verts.push_back(vert.x);
@@ -74,8 +75,17 @@ namespace Model {
 			Mesh::RenderMesh(&mesh);
 			index++;
 		}
-
-
+	}
+	
+	inline void Destroy(Model* model) {
+		for(auto& mesh : model->meshes) {
+			Mesh::DestroyMesh(&mesh);
+		}
+		for(auto& material : model->materials) {
+			Material::Destroy(&material);
+		}
+		model->meshes.clear();
+		model->materials.clear();
 	}
 
 }
