@@ -10,21 +10,21 @@ class MaterialProperty {
 	public:
 		std::string uniform;
 		MaterialProperty() { }
-		virtual void BindValue(Shader::Shader* shader) {}
+		virtual void BindValue(Eggy::Shader* shader) {}	
 };
 
 class VectorProperty : public MaterialProperty {
 	public:
 		glm::vec3 val;
-		virtual void BindValue(Shader::Shader* shader) {
-			Shader::Set(shader, val, uniform.c_str());
+		virtual void BindValue(Eggy::Shader* shader) {
+			Eggy::SetUniform(shader, val, uniform.c_str());
 		}
 };
 
 class FloatProperty : public MaterialProperty {
 	public:
 		float val;
-		virtual void BindValue(Shader::Shader* shader) {
-			Shader::Set(shader, val, uniform.c_str());
+		virtual void BindValue(Eggy::Shader* shader) {
+			Eggy::SetUniform(shader, val, uniform.c_str());
 		}
 };

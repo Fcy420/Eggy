@@ -2,7 +2,7 @@
 #include "../libraries/glad/glad.h"
 #include "../libraries/glfw/include/GLFW/glfw3.h"
 
-namespace Window {
+namespace Eggy {
 	struct Window {
 		GLFWwindow* window = nullptr;
 		bool open = false;

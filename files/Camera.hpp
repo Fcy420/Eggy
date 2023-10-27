@@ -2,10 +2,9 @@
 
 #include <iostream>
 #include "Shader.hpp"
-#include "ShaderCollection.hpp"
 
 #include "../libraries/glm/glm/gtc/matrix_transform.hpp"
-namespace Camera {
+namespace Eggy {
 
 	struct Camera {
 		glm::vec3 position = glm::vec3(0);
@@ -16,21 +15,12 @@ namespace Camera {
 	};
 	
 	
-	inline void UpdateCameraMatrix(Shader::Shader* shader, Camera* camera)  {
+	inline void UpdateCameraMatrix(Eggy::Shader* shader, Camera* camera)  {
 		glm::mat4 proj = glm::mat4(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::lookAt(camera->position, camera->position + camera->orientation, glm::vec3(0,1,0));
 		proj = glm::perspective(glm::radians(camera->FOV), camera->aspect, camera->near, camera->far);
 		glm::mat4 projectionMatrix = proj * view;
-		Shader::Set(shader, projectionMatrix, "Projection");
+		Eggy::SetUniform(shader, projectionMatrix, "Projection");
 	}
-	inline void UpdateCameraMatrix(ShaderCollection::ShaderCollection* collection, Camera* camera)  {
-		glm::mat4 proj = glm::mat4(1.0f);
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::lookAt(camera->position, camera->position + camera->orientation, glm::vec3(0,1,0));
-		proj = glm::perspective(glm::radians(camera->FOV), camera->aspect, camera->near, camera->far);
-		glm::mat4 projectionMatrix = proj * view;
-		ShaderCollection::Set(collection, projectionMatrix, "Projection");
-	}
-
 }

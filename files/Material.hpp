@@ -9,29 +9,29 @@
 #include "FileLoader.hpp"
 #include "StringHelper.hpp"
 
-namespace Material {
+namespace Eggy {
 	struct Material {
-		Shader::Shader shader;
+		Eggy::Shader shader;
 		std::vector<std::shared_ptr<MaterialProperty>> properties;
 	};
 
 
-	inline void AddProperty(Material* mat, MaterialProperty* prop) {
+	inline void AddMaterialProperty(Material* mat, MaterialProperty* prop) {
 		mat->properties.emplace_back(prop);
 	}
 
-	inline void Shader(Material* mat, Shader::Shader shader) {
+	inline void SetMaterialShader(Material* mat, Eggy::Shader shader) {
 		mat->shader = shader;
 	}	
 
-	inline void Bind(Material* mat) {
-		Shader::Use(&mat->shader);
+	inline void BindMaterial(Material* mat) {
+		Eggy::UseShader(&mat->shader);
 		for(auto& prop : mat->properties) {
 			prop.get()->BindValue(&mat->shader);
 		}
 	}
 
-	inline bool Load(Material* mat, const char* path) {
+	inline bool LoadMaterial(Material* mat, const char* path) {
 		std::string fileContent;
 		FileLoader::Read(fileContent, path);
 		std::vector<std::string> lines; StringHelper::split(lines, fileContent, "\n");
@@ -41,9 +41,9 @@ namespace Material {
 				continue;
 			}
 			if(attribs[0] == "shader") {
-				Shader::Shader shader;
+				Eggy::Shader shader;
 				std::string shaderPath = attribs[1];
-				Shader::CreateShader(&shader, (shaderPath + "/vert.glsl").c_str(), (shaderPath + "/frag.glsl").c_str());
+				Eggy::CreateShader(&shader, (shaderPath + "/vert.glsl").c_str(), (shaderPath + "/frag.glsl").c_str());
 				mat->shader = shader;
 			} else {
 				std::string uniform = attribs[0];
@@ -61,20 +61,20 @@ namespace Material {
 					VectorProperty* prop = new VectorProperty();
 					prop->uniform = uniform;
 					prop->val = res;
-					AddProperty(mat, prop);
+					AddMaterialProperty(mat, prop);
 				} else {
 					float val = std::stof(vec[0]);
 					FloatProperty* prop = new FloatProperty();
 					prop->uniform = uniform;
 					prop->val = val;
-					AddProperty(mat, prop);
+					AddMaterialProperty(mat, prop);
 				}
 			}
 		}
 		return true;
 	}
-	inline void Destroy(Material* mat) {
+	inline void DestroyMaterial(Material* mat) {
 		mat->properties.clear();
-		Shader::DestroyShader(&mat->shader);	
+		Eggy::DestroyShader(&mat->shader);	
 	}
 }

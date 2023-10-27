@@ -1,6 +1,6 @@
 CREATE
 tag=Sphere
 Material=Materials/standard.mat
-Mesh=Models/sphere.fbx
+Mesh=
 Position=0,0,0
 Rotation=0,0,0

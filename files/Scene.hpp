@@ -16,14 +16,14 @@
 #include "Texture.hpp"
 #include "Window.hpp"
 
-namespace Scene {
+namespace Eggy {
 	struct Scene {
-		std::vector<Node::Node> nodes;
+		std::vector<Eggy::Node> nodes;
 		unsigned int fbo, rbo;
 		GLuint tex;
 		unsigned int resX = 1280, resY = 720;
 	};
-	inline void Initialize(Scene* scene) {
+	inline void InitializeScene(Scene* scene) {
 		glGenFramebuffers(1, &scene->fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, scene->fbo);
 		glGenTextures(1, &scene->tex);
@@ -47,24 +47,24 @@ namespace Scene {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	inline void AddNode(Scene* scene, Node::Node node) {
+	inline void AddSceneNode(Scene* scene, Eggy::Node node) {
 		scene->nodes.push_back(node);
 	}
 	
-	inline void Update(Scene* scene, Camera::Camera* cam, Window::Window* window) {
+	inline void UpdateScene(Scene* scene, Eggy::Camera* cam, Eggy::Window* window) {
 		glEnable(GL_DEPTH_TEST);
 		glViewport(0,0,scene->resX,scene->resY);
 		glBindFramebuffer(GL_FRAMEBUFFER, scene->fbo);
-		Window::ClearWindow(window);
+		Eggy::ClearWindow(window);
 		for(auto& node : scene->nodes) {
-			Node::Update(&node, cam);
+			Eggy::UpdateNode(&node, cam);
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		Window::ClearWindow(window);
+		Eggy::ClearWindow(window);
 		glDisable(GL_DEPTH_TEST);
 	}
 
-	inline Node::Node* GetNode(Scene* scene, std::string nodeTag) {
+	inline Eggy::Node* GetSceneNode(Scene* scene, std::string nodeTag) {
 		for(int i = 0; i < scene->nodes.size(); i++) {
 			if(scene->nodes[i].nodeTag == nodeTag) {
 				return &scene->nodes[i];
@@ -73,23 +73,23 @@ namespace Scene {
 		return nullptr;
 	}
 
-	inline void Load(Scene* scene, const char* path) {
+	inline void LoadScene(Scene* scene, const char* path) {
 		std::string sceneContents; FileLoader::Read(sceneContents, path);
 		std::vector<std::string> lines; StringHelper::split(lines, sceneContents, "\n");
 		int index = 0;
 		for(auto& line : lines) {
 			if(line == "CREATE") {
 				std::vector<std::string> tagAttribute; StringHelper::split(tagAttribute, lines[index+1], "=");
-				Node::Node node(tagAttribute[1]);
+				Eggy::Node node(tagAttribute[1]);
 				std::vector<std::string> materialAttribute; StringHelper::split(materialAttribute, lines[index+2], "=");
 				std::string materialPath = materialAttribute[1];
-				Material::Material mat;
-				Material::Load(&mat, materialPath.c_str());
+				Eggy::Material mat;
+				Eggy::LoadMaterial(&mat, materialPath.c_str());
 				std::vector<std::string> meshAttribute; StringHelper::split(meshAttribute, lines[index+3], "=");
 				std::string meshPath = meshAttribute[1];
-				Model::Model model;
-				Model::Load(&model, meshPath.c_str());
-				Model::AssignMaterial(&model, mat);
+				Eggy::Model model;
+				Eggy::LoadModel(&model, meshPath);
+				Eggy::AssignModelMaterial(&model, mat);
 				node.model = model;
 				
 				std::vector<std::string> positionAttribute; StringHelper::split(positionAttribute, lines[index+4], "=");
@@ -109,19 +109,19 @@ namespace Scene {
 				node.rotation = rotVec;	
 				
 
-				AddNode(scene, node);
+				AddSceneNode(scene, node);
 			}
 			index++;
 
 		}
 	}
 	
-	inline void Destroy(Scene* scene) {
+	inline void DestroyScene(Scene* scene) {
 		glDeleteFramebuffers(1, &scene->fbo);
 		glDeleteRenderbuffers(1, &scene->rbo);
 		glDeleteTextures(1, &scene->tex);	
 		for(auto& node : scene->nodes) {
-			Node::Destroy(&node);
+			Eggy::DestroyNode(&node);
 		}
 		
 		scene->nodes.clear();

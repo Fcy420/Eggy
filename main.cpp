@@ -1,6 +1,6 @@
 #include "Eggy.h"
 
 int main() {
-	Eggy::Run();
+	Eggy::RunEditor();
 	return 0;
 }

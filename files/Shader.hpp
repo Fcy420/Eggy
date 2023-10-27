@@ -7,7 +7,7 @@
 #include <string>
 
 
-namespace Shader {
+namespace Eggy {
 	struct Shader {
 		unsigned int ID;
 	};
@@ -54,7 +54,7 @@ namespace Shader {
 		glDeleteShader(fragShader);
 	}
 
-	inline void Use(Shader* shader) {
+	inline void UseShader(Shader* shader) {
 		if(shader == nullptr) {
 			glUseProgram(0);
 			return;
@@ -62,28 +62,28 @@ namespace Shader {
 		glUseProgram(shader->ID);
 	}
 	
-	inline void Set(Shader* shader, int val, const char* uniform) {
-		Use(shader);
+	inline void SetUniform(Shader* shader, int val, const char* uniform) {
+		UseShader(shader);
 		glUniform1i(glGetUniformLocation(shader->ID, uniform), val);
 	}
 
-	inline void Set(Shader* shader, float val, const char* uniform) {
-		Use(shader);
+	inline void SetUniform(Shader* shader, float val, const char* uniform) {
+		UseShader(shader);
 		glUniform1f(glGetUniformLocation(shader->ID, uniform), val);
 	}
 	
-	inline void Set(Shader* shader, glm::vec3 val, const char* uniform) {
-		Use(shader);
+	inline void SetUniform(Shader* shader, glm::vec3 val, const char* uniform) {
+		UseShader(shader);
 		glUniform3fv(glGetUniformLocation(shader->ID, uniform), 1, glm::value_ptr(val));
 	}
 
-	inline void Set(Shader* shader, glm::mat4 val, const char* uniform) {
-		Use(shader);
+	inline void SetUniform(Shader* shader, glm::mat4 val, const char* uniform) {
+		UseShader(shader);
 		glUniformMatrix4fv(glGetUniformLocation(shader->ID, uniform), 1, GL_FALSE, glm::value_ptr(val));
 	}
 	
-	inline void Set(Shader* shader, glm::mat3 val, const char* uniform) {
-		Use(shader);
+	inline void SetUniform(Shader* shader, glm::mat3 val, const char* uniform) {
+		UseShader(shader);
 		glUniformMatrix3fv(glGetUniformLocation(shader->ID, uniform), 1, GL_FALSE, glm::value_ptr(val));
 	}
 

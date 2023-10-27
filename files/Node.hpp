@@ -9,9 +9,9 @@
 #include "../libraries/glm/glm/glm.hpp"
 #include "../libraries/glm/glm/gtx/vector_angle.hpp"
 
-namespace Node {
+namespace Eggy {
 	struct Node {
-		Model::Model model;
+		Eggy::Model model;
 		std::string nodeTag;
 		glm::vec3 position;
 		glm::vec3 rotation;
@@ -20,7 +20,7 @@ namespace Node {
 		}
 	};
 	
-	inline void Update(Node* node, Camera::Camera* cam) {
+	inline void UpdateNode(Node* node, Eggy::Camera* cam) {
 		if(node->model.meshes.size() > 0) {
 			glm::mat4 matrix = glm::mat4(1.0f);
 			matrix = glm::translate(matrix, node->position);
@@ -31,19 +31,19 @@ namespace Node {
 			normalMatrix = glm::inverse(normalMatrix);
 			normalMatrix = glm::transpose(normalMatrix);
 			for(auto& material : node->model.materials) {
-				Shader::Set(&material.shader, matrix, "Transform");
-				Shader::Set(&material.shader, normalMatrix, "NormalTransform");
-				Camera::UpdateCameraMatrix(&material.shader, cam);
+				Eggy::SetUniform(&material.shader, matrix, "Transform");
+				Eggy::SetUniform(&material.shader, normalMatrix, "NormalTransform");
+				Eggy::UpdateCameraMatrix(&material.shader, cam);
 			}
-			Model::Render(&node->model);
+			Eggy::RenderModel(&node->model);
 		}
 	}
 
-	inline void Rotate(Node* node, glm::vec3 rotation) {
+	inline void RotateNode(Node* node, glm::vec3 rotation) {
 		node->rotation += rotation;	
 	}
 	
-	inline void Destroy(Node* node) {
-		Model::Destroy(&node->model);
+	inline void DestroyNode(Node* node) {
+		Eggy::DestroyModel(&node->model);
 	}
 }

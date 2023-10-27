@@ -4,14 +4,14 @@
 #include "Shader.hpp"
 #include "Scene.hpp"
 
-namespace Display {
+namespace Eggy {
 	struct Display {
-		Shader::Shader screenShader;
+		Eggy::Shader screenShader;
 		unsigned int vao, vbo;
 		std::vector<unsigned int> tris;
 	};
-	inline void Initialize(Display* display) {
-		Shader::CreateShader(&display->screenShader, "Shaders/screen/vert.glsl", "Shaders/screen/frag.glsl");
+	inline void InitializeDisplay(Display* display) {
+		Eggy::CreateShader(&display->screenShader, "Shaders/screen/vert.glsl", "Shaders/screen/frag.glsl");
 		std::vector<float> verts = {
 			-1,-1,0, 0,0,
 			1,-1,0, 1,0,
@@ -39,14 +39,14 @@ namespace Display {
 		display->tris = tris;
 	}
 	
-	inline void Show(Display* display, Scene::Scene* scene) {
+	inline void Show(Display* display, Eggy::Scene* scene) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, scene->tex);
-		Shader::Set(&display->screenShader, 0, "tex0");
+		Eggy::SetUniform(&display->screenShader, 0, "tex0");
 		glBindVertexArray(display->vao);
 		glDrawElements(GL_TRIANGLES, display->tris.size(), GL_UNSIGNED_INT, display->tris.data());
 		glBindVertexArray(0);
-		Shader::Use(nullptr);
+		Eggy::UseShader(nullptr);
 	}
 
 
@@ -54,7 +54,7 @@ namespace Display {
 	inline void Destroy(Display* display) {
 		glDeleteBuffers(1, &display->vbo);
 		glDeleteVertexArrays(1, &display->vao);
-		Shader::DestroyShader(&display->screenShader);
+		Eggy::DestroyShader(&display->screenShader);
 	}
 
 

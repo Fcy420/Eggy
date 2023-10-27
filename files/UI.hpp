@@ -10,15 +10,15 @@
 #include "Scene.hpp"
 
 
-namespace UI {
+namespace Eggy {
 	
 	struct UI {
 		std::vector<std::string> logs;
-		Scene::Scene* scene;
-		Window::Window* window;
+		Eggy::Scene* scene;
+		Eggy::Window* window;
 	};
 
-	inline void Initialize(UI* ui, Scene::Scene* scene, Window::Window* window) {
+	inline void InitializeUI(UI* ui, Eggy::Scene* scene, Eggy::Window* window) {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -30,8 +30,8 @@ namespace UI {
 		ImGui_ImplGlfw_InitForOpenGL(window->window, true);
 		ImGui_ImplOpenGL3_Init("#version 430");
 	}
-	inline void CreateFrame(UI* ui) {
-		Window::ClearWindow(ui->window);
+	inline void CreateFrameUI(UI* ui) {
+		Eggy::ClearWindow(ui->window);
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		
@@ -49,7 +49,7 @@ namespace UI {
 					ImGui::OpenPopup("Model_loading");	
 				}
 				if(ImGui::MenuItem("Close")) {
-					Window::CloseWindow(ui->window);
+					Eggy::CloseWindow(ui->window);
 				}
 				ImGui::EndMenu();
 			}
@@ -90,14 +90,14 @@ namespace UI {
 	}
 	
 
-	inline void Render() {
+	inline void RenderUI() {
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
-	inline void Update(UI* ui) {
-		CreateFrame(ui);
-		Render();
+	inline void UpdateUI(UI* ui) {
+		CreateFrameUI(ui);
+		RenderUI();
 	}
 	
 	inline void Log(UI* ui, std::string log) {
