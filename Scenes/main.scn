@@ -1,6 +1,0 @@
-CREATE
-tag=Sphere
-Material=Materials/standard.mat
-Mesh=
-Position=0,0,0
-Rotation=0,0,0

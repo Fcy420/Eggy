@@ -1,33 +1,45 @@
 cmake_minimum_required(VERSION 3.17)
 project(Eggy)
-add_subdirectory(libraries/glfw)
-add_subdirectory(libraries/glm)
-add_subdirectory(libraries/assimp)
-set(libIncludes 
-	libraries/glad/glad.h
-	libraries/KHR/khrplatform.h
-	libraries/glfw/include/GLFW/glfw3.h
-	libraries/imgui/imconfig.h
-	libraries/imgui/imgui.h
-	libraries/imgui/imgui.cpp
-	libraries/imgui/imgui_draw.cpp
-	libraries/imgui/imgui_internal.h
-  	libraries/imgui/imgui_widgets.cpp
-	libraries/imgui/imgui_tables.cpp
-  	libraries/imgui/imstb_rectpack.h
-  	libraries/imgui/imstb_textedit.h
-	libraries/imgui/imstb_truetype.h
-  	libraries/imgui/imgui_demo.cpp
-	libraries/imgui/backends/imgui_impl_glfw.h
-	libraries/imgui/backends/imgui_impl_glfw.cpp
-	libraries/imgui/backends/imgui_impl_opengl3.h
-	libraries/imgui/backends/imgui_impl_opengl3.cpp
-	libraries/imgui/backends/imgui_impl_opengl3_loader.h
+set(BUILD_SHARED_LIBS ON)
+add_subdirectory(libs/cimgui)
+add_subdirectory(libs/cglm)
+
+set(SOURCES
+	files/window.c
+	files/mesh.c
+	files/shader.c
+	files/ui.c
+	files/material.c
+	files/node.c
+	files/scene.c
+	files/components.c
 )
+
+#GLFW
+set(GLFW_VERSION 3.3.8)
+include(FetchContent)
+	FetchContent_Declare(
+    glfw
+    URL https://github.com/glfw/glfw/archive/refs/tags/${GLFW_VERSION}.tar.gz)
+
+FetchContent_GetProperties(glfw)
+if (NOT glfw_POPULATED)
+	set(FETCHCONTENT_QUIET NO)
+    FetchContent_Populate(glfw)
+	set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+	set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+	add_subdirectory(${glfw_SOURCE_DIR} ${glfw_BINARY_DIR})
+endif()
+
+#cimgui for backends
+set(cimgui_backend_sources
+	libs/cimgui/imgui/backends/imgui_impl_glfw.cpp
+	libs/cimgui/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+
+
+
 find_package(OpenGL REQUIRED)
-add_executable(${PROJECT_NAME} ${libIncludes} glad.c main.cpp)
-target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw glm assimp)
-file(COPY Shaders DESTINATION .)
-file(COPY Scenes DESTINATION .)
-file(COPY Materials DESTINATION .)
-file(COPY Models DESTINATION .)
+add_executable(${PROJECT_NAME} ${SOURCES} ${cimgui_backend_sources} glad.c main.c)
+target_link_libraries(${PROJECT_NAME} OpenGL::GL glfw cimgui cglm)

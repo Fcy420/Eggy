@@ -1,59 +1,59 @@
 #pragma once
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <fstream>
+#include <cglm/vec4-ext.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <memory>
+#include "files/scene.h"
+#include "files/window.h"
+#include "files/ui.h"
+#include "files/renderer.h"
 
-#include "files/Window.hpp"
-#include "files/Mesh.hpp"
-#include "files/Shader.hpp"
-#include "files/Camera.hpp"
-#include "files/UI.hpp"
-#include "files/Model.hpp"
-#include "files/MaterialProperty.hpp"
-#include "files/Material.hpp"
-#include "files/Node.hpp"
-#include "files/Scene.hpp"
-#include "files/Display.hpp"
+void run_editor() {
+	Window window;
+	init_window(&window, 1280, 720, "Eggy - 0.0.1");
+	
+	UI ui;
+	init_ui(&ui, &window);
+	Material mat;
+	init_material(&mat, "Shaders/standard");
 
-namespace Eggy {
+	Mesh mesh;
+	init_mesh(&mesh);
+	float vertices[] = {
+		0,0,0,
+		1,0,0,
+		0,1,0,
+		1,1,0
+	};
+	unsigned int triangles[] = {
+		0,1,2,3,2,1
+	};
+	create_mesh(&mesh, vertices, 12, triangles, 6);
 
-	inline void RunEditor() {
-		unsigned int width = 1280, height = 720;
-		Eggy::Window window;
-		Eggy::CreateWindow(&window, width, height, "Eggy - 1.1.0");
+	MeshFilterComponent filterComponent;
+	filterComponent.mesh = mesh;
+	MeshRendererComponent renderComponent;
+	renderComponent.material = mat;
+	Node node;
+	init_node(&node, "Body");
+	add_mesh_filter_node_component(&node, filterComponent);
+	add_mesh_renderer_node_component(&node, renderComponent);
+
+	Scene scene;
+	init_scene(&scene);
+	add_node_scene(&scene, node);
+
+	while(window_open(&window)) {
+		flush_window(&window);
 		
-		Eggy::Camera camera;
-		camera.aspect = (float)width/height;
-		camera.position = glm::vec3(0,0,-15);
+		update_scene(&scene);
 
-		Eggy::Scene scene;
-		Eggy::InitializeScene(&scene);
-		Eggy::LoadScene(&scene, "Scenes/main.scn");
+		create_frame_ui(&ui);
+		update_frame_ui(&ui);
+		render_frame_ui(&ui);
 
-		Eggy::UI ui;
-		Eggy::InitializeUI(&ui, &scene, &window);
-
-		bool firstClick = false, resetMouse = false;
-		double mouseStartX, mouseStartY;
-		while(window.open) {
-			
-			Eggy::UpdateScene(&scene, &camera, &window);
-			Eggy::UpdateUI(&ui);
-			
-			if(Eggy::GetKey(&window, GLFW_KEY_ESCAPE)) {
-				Eggy::CloseWindow(&window);
-			}
-			Eggy::PollEvents();
-			Eggy::SwapWindowBuffers(&window);
-		}
-		
-		Eggy::DestroyScene(&scene);
-		Eggy::DestroyWindow(&window);
+		swap_window(&window);
+		events_window();
 	}
-
-
+	destroy_scene(&scene);
+	destroy_window(&window);
 }
