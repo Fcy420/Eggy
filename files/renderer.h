@@ -9,6 +9,8 @@
 #include <cglm/mat4.h>
 #include <cglm/types.h>
 
+#include "window.h"
+
 typedef struct {
 	unsigned int vao, vbo, ebo;
 	unsigned int triCount;
@@ -16,6 +18,7 @@ typedef struct {
 
 void init_mesh(Mesh* mesh);
 void create_mesh(Mesh* mesh, float vertices[], unsigned int vertexCount, unsigned int triangles[], unsigned int triCount);
+void load_mesh(Mesh* mesh, const char* path);
 void draw_mesh(Mesh* mesh);
 void destroy_mesh(Mesh* mesh);
 
@@ -59,3 +62,16 @@ void bind_material(Material* mat);
 void add_float_material_component(Material* mat, FloatComponent component);
 void add_vec4_material_component(Material* mat, Vec4Component component);
 void destroy_material(Material* mat);
+
+typedef struct {
+	unsigned int fbo, rbo, tex;
+	unsigned int width, height;
+	Material material;
+	Mesh mesh;
+} Display;
+
+void init_display(Display* display, int width, int height, const char* shader);
+void bind_display(Display* display);
+void unbind_displays();
+void view_display(Display* display);
+void destroy_display(Display* display);

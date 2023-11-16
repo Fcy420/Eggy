@@ -1,23 +1,36 @@
 #include "scene.h"
 
-void init_scene(Scene *scene) {
-	scene->node_size = 0;	
+void init_scene(struct Scene *scene) {
+	scene->node_size = 0;
 }
 
-void update_scene(Scene *scene) {
+void set_display_scene(struct Scene *scene, Display *display) {
+	scene->sceneView = display;
+}
+
+void update_scene(struct Scene *scene) {
 	for(int i = 0; i < scene->node_size; i++) {
 		update_node(&scene->nodes[i]);
 	}
 }
 
-void destroy_scene(Scene *scene) {
+void render_scene(struct Scene *scene) {
+	for(int i = 0; i < scene->node_size; i++) {
+		if(scene->nodes[i].components.camera_renderer_components_size > 0) {
+			
+		}
+	}
+}
+
+void destroy_scene(struct Scene *scene) {
 	for(int i = 0; i < scene->node_size; i++) {
 		destroy_node(&scene->nodes[i]);
 	}
 	if(scene->node_size > 0) free(scene->nodes);
 }
 
-void add_node_scene(Scene *scene, Node node) {
+void add_node_scene(struct Scene *scene, Node node) {
+	node.scene = scene;
 	if(scene->node_size == 0) {
 		scene->nodes = (Node*) malloc(sizeof(Node)*15);
 		scene->nodes[0] = node;
@@ -30,7 +43,7 @@ void add_node_scene(Scene *scene, Node node) {
 	scene->node_size++;
 }
 
-Node* get_node_scene(Scene* scene, const char* tag) {
+Node* get_node_scene(struct Scene* scene, const char* tag) {
 	for(int i = 0; i < scene->node_size; i++) {
 		if(scene->nodes[i].tag == tag) {
 			return &scene->nodes[i];

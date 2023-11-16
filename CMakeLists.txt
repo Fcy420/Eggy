@@ -8,11 +8,15 @@ set(SOURCES
 	files/window.c
 	files/mesh.c
 	files/shader.c
-	files/ui.c
+	files/editor-ui.c
 	files/material.c
 	files/node.c
 	files/scene.c
 	files/components.c
+	files/display.c
+)
+set(HEADERS 
+	libs/tinyobj/tinyobj_loader_c.h
 )
 
 #GLFW

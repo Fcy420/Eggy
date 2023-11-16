@@ -35,7 +35,7 @@ void add_float_material_component(Material* mat, FloatComponent component) {
 		mat->components.float_components = (FloatComponent*) malloc(sizeof(FloatComponent)*15);
 		mat->components.float_components[0] = component;
 	} else if(mat->components.float_components_size % 15 == 0) {
-		mat->components.float_components = (FloatComponent*) realloc(mat->components.float_components, mat->components.float_components_size*sizeof(FloatComponent)*15);
+		mat->components.float_components = (FloatComponent*) realloc(mat->components.float_components, (mat->components.float_components_size+15)*sizeof(FloatComponent));
 		mat->components.float_components[mat->components.float_components_size] = component;
 	} else {
 		mat->components.float_components[mat->components.float_components_size] = component;
@@ -48,7 +48,7 @@ void add_vec4_material_component(Material *mat, Vec4Component component) {
 		mat->components.vec4_components = (Vec4Component*) malloc(sizeof(Vec4Component)*15);
 		mat->components.vec4_components[0] = component;
 	} else if(mat->components.vec4_components_size % 15 == 0) {
-		mat->components.vec4_components = (Vec4Component*) realloc(mat->components.vec4_components, mat->components.vec4_components_size*sizeof(Vec4Component)*15);
+		mat->components.vec4_components = (Vec4Component*) realloc(mat->components.vec4_components, (mat->components.vec4_components_size+15)*sizeof(Vec4Component));
 		mat->components.vec4_components[mat->components.vec4_components_size] = component;
 	} else {
 		mat->components.vec4_components[mat->components.vec4_components_size] = component;
